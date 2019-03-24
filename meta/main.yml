@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  role_name: sssd
   author: Stas Stavnichuk
   description: Install and configure SSSD
   license: BSD
@@ -11,7 +12,7 @@ galaxy_info:
     - stretch
   categories:
   - authentication
-dependencies:
+
 galaxy_tags:
   - auth
   - ldap
