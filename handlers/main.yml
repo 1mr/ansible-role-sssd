@@ -1,0 +1,8 @@
+---
+- name: restart sssd
+  service:
+    name: sssd
+    state: restarted
+
+- name: pam auth update
+  shell: pam-auth-update --package

@@ -1,0 +1,9 @@
+---
+- name: install sssd packages
+  package:
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - sssd
+    - sssd-ldap
+    - sssd-tools

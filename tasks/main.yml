@@ -1,0 +1,10 @@
+---
+- import_tasks: install.yml
+  tags:
+    - install
+    - install_sssd
+
+- import_tasks: configure.yml
+  tags:
+    - configure
+    - configure_sssd

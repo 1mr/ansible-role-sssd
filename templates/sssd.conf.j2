@@ -1,0 +1,73 @@
+# {{ ansible_managed }}
+[sssd]
+services = nss, pam
+config_file_version = 2
+domains = {{ sssd_ldap_domain }}
+
+[nss]
+filter_users = adm,avahi,bin,daemon,dbus,haldaemon,halt,ldap,mail,named,news,nfsnobody,nobody,nscd,nslcd,ntp,operator,radiusd,root,rpc,rpcuser,saslauth,shutdown,smmsp,sshd,sync,tcpdump,vcsa,zabbix,www-data,nginx
+filter_groups = adm,audio,bin,cdrom,cgred,daemon,dbus,dialout,dip,disk,floppy,fuse,kmem,ldap,lock,lp,mail,man,mem,nfsnobody,nobody,nscd,ntp,root,rpc,rpcuser,saslauth,smmsp,sshd,sys,tape,tcpdump,tty,users,utempter,utmp,vcsa,video,zabbix,www-data,nginx
+reconnection_retries = 3
+
+[pam]
+reconnection_retries = 3
+
+{% if sssd_type == 'ad' %}
+[domain/{{ sssd_ldap_domain }}]
+id_provider = ad
+access_provider = ad
+enumerate = true
+cache_credentials = True
+entry_cache_timeout = 8600
+default_shell = /bin/bash
+{% endif %}
+{% if sssd_type == 'ldap' %}
+{# one domain, no reason for multiple at time of writing #}
+[domain/{{ sssd_ldap_domain }}]
+min_id = 9999
+id_provider = ldap
+auth_provider = ldap
+chpass_provider = ldap
+access_provider = ldap
+autofs_provider = ldap
+ldap_page_size = 1000
+
+{# connection configuration #}
+ldap_schema = {{ sssd_ldap_schema }}
+ldap_uri = {{ sssd_ldap_uris | join(',') }}
+ldap_tls_cacertdir = /etc/ssl/certs
+ldap_tls_cacert = /etc/ssl/certs/{{ sssd_ldap_cacert }}
+ldap_tls_reqcert = hard
+ldap_id_use_start_tls = True
+
+{# search configuration #}
+#ldap_search_base = {{ sssd_ldap_search_base }}
+ldap_user_search_base = {{ sssd_ldap_user_search_base }}
+ldap_group_search_base = {{ sssd_ldap_group_search_base }}
+ldap_default_bind_dn = {{ sssd_ldap_bind_dn }}
+ldap_default_authtok_type = password
+ldap_default_authtok = {{ sssd_ldap_bind_password }}
+enumerate = true
+ignore_group_members = true
+cache_credentials = True
+entry_cache_timeout = 86000
+ldap_referrals = False
+
+{# filter configuration #}
+ldap_access_order = filter
+ldap_access_filter = {{ sssd_ldap_access_filter }}
+
+{# mapping/attribute configuration #}
+case_sensitive = false
+ldap_user_name = sAMAccountName
+ldap_user_principal = userPrincipalName
+ldap_user_gecos = displayName
+ldap_user_object_class = user
+ldap_group_object_class = group
+ldap_user_uid_number = uidNumber
+ldap_user_gid_number = gidNumber
+ldap_group_gid_number = gidNumber
+ldap_user_home_directory = unixHomeDirectory
+ldap_pwd_policy = none
+default_shell = /bin/bash
+{% endif %}

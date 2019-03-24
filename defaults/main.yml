@@ -1,0 +1,15 @@
+---
+sssd_dep: it-dep
+sssd_type: ldap
+sssd_ldap_domain: example.lcl
+sssd_ldap_schema: ad
+sssd_ldap_search_base: ou=Deps,dc=example,dc=lcl?subtree?{{ sssd_ldap_user_search_filter }}
+sssd_ldap_user_search_base: ou=Deps,dc=example,dc=lcl?subtree?{{ sssd_ldap_user_search_filter }}
+sssd_ldap_group_search_base: OU=IT,OU=Deps,DC=example,DC=lcl???OU=Servers,DC=example,DC=lcl??{{ sssd_ldap_group_search_filter }}
+sssd_ldap_uris: ["ldaps://ldap01.example.com/"]
+sssd_ldap_bind_dn: "{{ ldap_user }}"
+sssd_ldap_bind_password: "{{ ldap_pass }}"
+sssd_ldap_user_search_filter: (&(objectClass=person)(!(userAccountControl=514))(|(memberOf=CN={{ inventory_hostname }},OU={{ ldap_ou }},OU=Servers,DC=example,DC=lcl)(memberOf=CN={{ inventory_hostname }}-www,OU={{ ldap_ou }},OU=Servers,DC=example,DC=lcl)(memberOf=CN={{ inventory_hostname }}-root,OU={{ ldap_ou }},OU=Servers,DC=example,DC=lcl)(memberOf=CN={{ sssd_dep }},OU=IT,OU=Deps,DC=example,DC=lcl)(memberOf=CN=duty,OU=IT,OU=Deps,DC=example,DC=lcl)))
+sssd_ldap_group_search_filter: "(&(objectClass=group)(gidNumber=*)(|(CN={{ sssd_dep }})(CN=duty)(CN={{ inventory_hostname }})(CN={{ inventory_hostname }}-www)(CN={{ inventory_hostname }}-root)))"
+sssd_ldap_access_filter: (|(memberOf=CN={{ inventory_hostname }},OU={{ ldap_ou }},OU=Servers,DC=example,DC=lcl)(memberOf=CN={{ inventory_hostname }}-www,OU={{ ldap_ou }},OU=Servers,DC=example,DC=lcl)(memberOf=CN={{ inventory_hostname }}-root,OU={{ ldap_ou }},OU=Servers,DC=example,DC=lcl)(memberOf=CN={{ sssd_dep }},OU=IT,OU=Deps,DC=example,DC=lcl)(memberOf=CN=duty,OU=IT,OU=Deps,DC=example,DC=lcl))
+sssd_ldap_cacert: ca-certificates.crt

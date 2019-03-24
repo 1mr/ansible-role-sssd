@@ -1,0 +1,44 @@
+---
+- name: uninstall nslcd
+  package:
+    name: '{{ item }}'
+    state: absent
+    purge: yes
+  with_items:
+    - nslcd
+    - nscd
+
+- name: copy sssd configuration file
+  template:
+    src: sssd.conf.j2
+    dest: /etc/sssd/sssd.conf
+    mode: 0600
+    backup: yes
+    owner: root
+    group: root
+  notify:
+    - restart sssd
+
+- name: don't query sssd
+  replace:
+    dest: /etc/nsswitch.conf
+    regexp: '^({{ item }}.*)(\bsss)(\b.*)$'
+    replace: '\1 \3'
+    backup: yes
+  with_items:
+    - service
+    - sudo
+    - netgroup
+
+- name: start and enable auth services
+  service:
+    name: sssd
+    state: started
+    enabled: yes
+
+- name: add pam_mkhomedir
+  copy:
+    src: pam_mkhomedir
+    dest: /usr/share/pam-configs/mkhomedir
+  notify:
+    - pam auth update
