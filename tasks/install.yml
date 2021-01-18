@@ -1,4 +1,14 @@
 ---
+- name: uninstall nslcd
+  package:
+    name: '{{ item }}'
+    state: absent
+    purge: yes
+  with_items:
+    - nslcd
+    - nscd
+    - unscd
+
 - name: install sssd packages
   package:
     name: '{{ item }}'

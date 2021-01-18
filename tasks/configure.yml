@@ -1,13 +1,4 @@
 ---
-- name: uninstall nslcd
-  package:
-    name: '{{ item }}'
-    state: absent
-    purge: yes
-  with_items:
-    - nslcd
-    - nscd
-
 - name: copy sssd configuration file
   template:
     src: sssd.conf.j2

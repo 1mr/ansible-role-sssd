@@ -5,4 +5,4 @@
     state: restarted
 
 - name: pam auth update
-  shell: pam-auth-update --package
+  shell: DEBIAN_FRONTEND=noninteractive pam-auth-update --enable mkhomedir
