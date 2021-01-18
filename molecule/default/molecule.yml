@@ -1,0 +1,17 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8 
+platforms:
+  - name: instance
+    image: "1am3r/debian:${MOLECULE_DISTRO:-buster}"
+    volumes:
+      - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+    privileged: true
+    pre_build_image: true

@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include 1mr.sssd"
+      include_role:
+        name: "1mr.sssd"
